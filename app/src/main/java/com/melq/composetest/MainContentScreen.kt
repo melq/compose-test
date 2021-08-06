@@ -33,31 +33,8 @@ fun MainContent() {
     val ansNum = remember { mutableStateOf(0) }
 
     Column(horizontalAlignment = Alignment.End) {
-
-        Row(modifier = Modifier
-            .height(IntrinsicSize.Min)
-            .width(IntrinsicSize.Min),
-            verticalAlignment = Alignment.CenterVertically) {
-            Text(text = ansNum.value.toString(),
-                fontSize = 40.sp,
-                modifier = Modifier
-                    .weight(2.1f)
-                    .fillMaxHeight()
-                    .border(2.dp, Color.Gray, shape = RectangleShape)
-                    .padding(6.dp)
-                    .wrapContentWidth(Alignment.End))
-
-            ButtonSpacer()
-
-            Button(onClick = { ansNum.value /= 10},
-                modifier = Modifier
-                    .weight(1f)
-                    .width(100.dp)
-                    .height(72.dp),
-                colors = ButtonDefaults.textButtonColors(backgroundColor = Color(
-                    131, 78, 78, 255))) {
-                Image(painter = painterResource(id = R.drawable.ic_baseline_keyboard_backspace_24), contentDescription = "backSpace")
-            }
+        DisplayArea(ansNum = ansNum.value) {
+            ansNum.value /= 10
         }
 
         Spacer(modifier = Modifier.size(24.dp))
@@ -66,6 +43,35 @@ fun MainContent() {
             val newNum = ansNum.value * 10 + it
             if (newNum in 0..99)
                 ansNum.value = newNum
+        }
+    }
+}
+
+@Composable
+fun DisplayArea(ansNum: Int, onDeleteClick: () -> Unit) {
+    Row(modifier = Modifier
+        .height(IntrinsicSize.Min)
+        .width(IntrinsicSize.Min),
+        verticalAlignment = Alignment.CenterVertically) {
+
+        Text(text = ansNum.toString(),
+            fontSize = 40.sp,
+            modifier = Modifier
+                .weight(2.1f)
+                .fillMaxHeight()
+                .border(2.dp, Color.Gray, shape = RectangleShape)
+                .padding(6.dp)
+                .wrapContentWidth(Alignment.End))
+
+        ButtonSpacer()
+
+        Button(onClick = onDeleteClick,
+            modifier = Modifier
+                .weight(1f)
+                .width(100.dp)
+                .height(72.dp),
+            colors = ButtonDefaults.textButtonColors(backgroundColor = Color(175, 121, 121, 255))) {
+            Image(painter = painterResource(id = R.drawable.ic_baseline_keyboard_backspace_24), contentDescription = "backSpace")
         }
     }
 }
@@ -102,9 +108,9 @@ fun NumPad(onClick: (Int) -> Unit) {
                     .width(100.dp)
                     .height(72.dp),
                 colors = ButtonDefaults.textButtonColors(backgroundColor = Color(
-                    82,
-                    129,
-                    83,
+                    111,
+                    162,
+                    112,
                     255
                 ), contentColor = Color.White
                 )) {
