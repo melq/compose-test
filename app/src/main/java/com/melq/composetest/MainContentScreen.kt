@@ -14,32 +14,36 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
+@Preview
 @Composable
 fun MainContentScreen() {
-    Box(Modifier.fillMaxSize()) {
+   Column(Modifier.fillMaxSize(),
+   horizontalAlignment = Alignment.CenterHorizontally,
+   verticalArrangement = Arrangement.Center) {
         MainContent()
     }
 }
 
-@Preview
 @Composable
 fun MainContent() {
-    Column(modifier = Modifier.background(Color.LightGray),
-        horizontalAlignment = Alignment.End) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
-        @Composable fun buttonSpacer() { Spacer(modifier = Modifier.size(8.dp)) }
+        @Composable fun buttonSpacer() { Spacer(modifier = Modifier.size(16.dp)) }
+        val numFontSize = 24.sp
 
-        Row(verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
+        Row(modifier = Modifier
             .height(IntrinsicSize.Min)
-            .width(IntrinsicSize.Min)) {
+            .width(IntrinsicSize.Min),
+            verticalAlignment = Alignment.CenterVertically) {
             Text(text = "test",
+                fontSize = 32.sp,
                 modifier = Modifier
-                    .weight(2f)
+                    .weight(3f)
                     .fillMaxHeight()
                     .border(2.dp, Color.Gray, shape = RectangleShape)
-                    .padding(8.dp)
+                    .padding(6.dp)
                     .wrapContentWidth(Alignment.End))
 
             buttonSpacer()
@@ -49,15 +53,15 @@ fun MainContent() {
             }
         }
 
-        Spacer(modifier = Modifier.size(12.dp))
+        Spacer(modifier = Modifier.size(24.dp))
 
         Column(horizontalAlignment = Alignment.End) {
             val numRow = 3
             for (i in 0..6 step numRow) {
                 Row() {
                     for (j in 1 until numRow + 1) {
-                        Button(onClick = {}) {
-                            Text(text = (i + j).toString())
+                        Button(onClick = {}, modifier = Modifier.width(100.dp).height(72.dp)) {
+                            Text(text = (i + j).toString(), fontSize = numFontSize)
                         }
                         if (j != numRow) buttonSpacer()
                     }
@@ -65,12 +69,12 @@ fun MainContent() {
                 buttonSpacer()
             }
             Row() {
-                Button(onClick = {}) {
-                    Text(text = "0")
+                Button(onClick = {}, modifier = Modifier.width(100.dp).height(72.dp)) {
+                    Text(text = "0", fontSize = numFontSize)
                 }
                 buttonSpacer()
-                Button(onClick = {}) {
-                    Text(text = "OK")
+                Button(onClick = {}, modifier = Modifier.width(100.dp).height(72.dp)) {
+                    Text(text = "OK", fontSize = numFontSize)
                 }
             }
         }
