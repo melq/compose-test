@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">composeTest</string>
+
+    <string name="range_error">0から99までの数のみ入力できます</string>
 </resources>

@@ -3,9 +3,7 @@ package com.melq.composetest
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -14,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -21,18 +20,44 @@ import androidx.compose.ui.unit.sp
 @Preview
 @Composable
 fun MainContentScreen() {
-    Column(Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center) {
-        MainContent()
-    }
+    val strId = remember { mutableStateOf(0) }
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("数当てゲーム") }
+            )
+        },
+        content = {
+            Box(modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.BottomCenter) {
+                Column(Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center) {
+
+                    MainContent() {
+                        strId.value = it
+                    }
+
+                }
+                if (strId.value != 0) {
+                    Snackbar(modifier = Modifier.padding(8.dp),
+                    action = {
+                        Button(onClick = {strId.value = 0}) {
+                            Text(text = "OK")
+                        }
+                    }) {
+                        Text(text = stringResource(id = strId.value))
+                    }
+                }
+            }
+        })
 }
 
 @Composable
-fun MainContent() {
+fun MainContent(onErrorOccur: (Int) -> Unit) {
     val ansNum = remember { mutableStateOf(0) }
-
     Column(horizontalAlignment = Alignment.End) {
+
         DisplayArea(ansNum = ansNum.value) {
             ansNum.value /= 10
         }
@@ -40,9 +65,15 @@ fun MainContent() {
         Spacer(modifier = Modifier.size(24.dp))
 
         NumPad() {
-            val newNum = ansNum.value * 10 + it
-            if (newNum in 0..99)
-                ansNum.value = newNum
+            when (val newNum = ansNum.value * 10 + it) {
+                in 0..99 -> ansNum.value = newNum
+                100 -> {
+
+                }
+                else -> {
+                    onErrorOccur(R.string.range_error)
+                }
+            }
         }
     }
 }
