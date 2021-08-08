@@ -16,6 +16,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlin.math.abs
+import kotlin.random.Random
 
 @Preview
 @Composable
@@ -28,7 +30,7 @@ fun MainContentScreen() {
         },
         content = {
             Box(modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.BottomCenter) {
+                contentAlignment = Alignment.BottomCenter) {
                 Column(Modifier.fillMaxSize()) {
 
                     MainContent()
@@ -39,9 +41,15 @@ fun MainContentScreen() {
 
 @Composable
 fun MainContent() {
+    val inGame = remember { mutableStateOf(false) }
     val strId = remember { mutableStateOf(0) }
     val quesNum = remember { mutableStateOf(0) }
     val ansNum = remember { mutableStateOf(0) }
+
+    if (!inGame.value) {
+        inGame.value = true
+        quesNum.value = abs(Random(System.currentTimeMillis()).nextInt() % 100)
+    }
 
     Box(modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.BottomCenter) {
@@ -50,6 +58,7 @@ fun MainContent() {
             verticalArrangement = Arrangement.Center) {
 
             Column(horizontalAlignment = Alignment.End) {
+                Text(text = quesNum.value.toString())
 
                 DisplayArea(ansNum = ansNum.value) {
                     ansNum.value /= 10
@@ -59,14 +68,25 @@ fun MainContent() {
 
                 NumPad() {
                     if (it == 100) {
-                        return@NumPad
-                    }
-                    when (val newNum = ansNum.value * 10 + it) {
-                        in 0..99 -> ansNum.value = newNum
-                        else -> {
-                            strId.value = R.string.range_error
+                        when {
+                            ansNum.value == quesNum.value -> {
+                                strId.value = R.string.correct
+                                inGame.value = false
+                            }
+                            ansNum.value < quesNum.value -> {
+                                strId.value = R.string.more
+                            }
+                            else -> {
+                                strId.value = R.string.less
+                            }
                         }
-                    }
+                    } else
+                        when (val newNum = ansNum.value * 10 + it) {
+                            in 0..99 -> ansNum.value = newNum
+                            else -> {
+                                strId.value = R.string.range_error
+                            }
+                        }
                 }
             }
         }
