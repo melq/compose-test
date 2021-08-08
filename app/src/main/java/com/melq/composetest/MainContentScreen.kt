@@ -42,6 +42,7 @@ fun MainContentScreen() {
 @Composable
 fun MainContent() {
     val inGame = remember { mutableStateOf(false) }
+    val history = remember { mutableStateOf(mutableListOf<Int>()) }
     val strId = remember { mutableStateOf(0) }
     val quesNum = remember { mutableStateOf(0) }
     val ansNum = remember { mutableStateOf(0) }
@@ -49,6 +50,7 @@ fun MainContent() {
     if (!inGame.value) {
         inGame.value = true
         quesNum.value = abs(Random(System.currentTimeMillis()).nextInt() % 100)
+        history.value.clear()
     }
 
     Box(modifier = Modifier.fillMaxSize(),
@@ -68,23 +70,22 @@ fun MainContent() {
 
                 NumPad() {
                     if (it == 100) {
-                        when {
-                            ansNum.value == quesNum.value -> {
-                                strId.value = R.string.correct
-                                inGame.value = false
-                            }
-                            ansNum.value < quesNum.value -> {
+                        if (ansNum.value == quesNum.value) {
+                            strId.value = R.string.correct
+                            inGame.value = false
+                        } else {
+                            history.value.add(ansNum.value)
+                            strId.value = 0
+                            if (ansNum.value < quesNum.value)
                                 strId.value = R.string.more
-                            }
-                            else -> {
+                            else
                                 strId.value = R.string.less
-                            }
                         }
                     } else
                         when (val newNum = ansNum.value * 10 + it) {
                             in 0..99 -> ansNum.value = newNum
                             else -> {
-                                strId.value = R.string.range_error
+                                ansNum.value = it
                             }
                         }
                 }
@@ -97,7 +98,7 @@ fun MainContent() {
                         Text(text = "OK")
                     }
                 }) {
-                Text(text = stringResource(id = strId.value))
+                Text(text = stringResource(id = strId.value) + " (回答数: ${history.value.size})")
             }
         }
     }
