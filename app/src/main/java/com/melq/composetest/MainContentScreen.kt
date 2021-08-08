@@ -20,7 +20,6 @@ import androidx.compose.ui.unit.sp
 @Preview
 @Composable
 fun MainContentScreen() {
-    val strId = remember { mutableStateOf(0) }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -30,49 +29,55 @@ fun MainContentScreen() {
         content = {
             Box(modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.BottomCenter) {
-                Column(Modifier.fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center) {
+                Column(Modifier.fillMaxSize()) {
 
-                    MainContent() {
-                        strId.value = it
-                    }
-
-                }
-                if (strId.value != 0) {
-                    Snackbar(modifier = Modifier.padding(8.dp),
-                    action = {
-                        Button(onClick = {strId.value = 0}) {
-                            Text(text = "OK")
-                        }
-                    }) {
-                        Text(text = stringResource(id = strId.value))
-                    }
+                    MainContent()
                 }
             }
         })
 }
 
 @Composable
-fun MainContent(onErrorOccur: (Int) -> Unit) {
+fun MainContent() {
+    val strId = remember { mutableStateOf(0) }
+    val quesNum = remember { mutableStateOf(0) }
     val ansNum = remember { mutableStateOf(0) }
-    Column(horizontalAlignment = Alignment.End) {
 
-        DisplayArea(ansNum = ansNum.value) {
-            ansNum.value /= 10
+    Box(modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.BottomCenter) {
+        Column(Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center) {
+
+            Column(horizontalAlignment = Alignment.End) {
+
+                DisplayArea(ansNum = ansNum.value) {
+                    ansNum.value /= 10
+                }
+
+                Spacer(modifier = Modifier.size(24.dp))
+
+                NumPad() {
+                    if (it == 100) {
+                        return@NumPad
+                    }
+                    when (val newNum = ansNum.value * 10 + it) {
+                        in 0..99 -> ansNum.value = newNum
+                        else -> {
+                            strId.value = R.string.range_error
+                        }
+                    }
+                }
+            }
         }
-
-        Spacer(modifier = Modifier.size(24.dp))
-
-        NumPad() {
-            when (val newNum = ansNum.value * 10 + it) {
-                in 0..99 -> ansNum.value = newNum
-                100 -> {
-
-                }
-                else -> {
-                    onErrorOccur(R.string.range_error)
-                }
+        if (strId.value != 0) {
+            Snackbar(modifier = Modifier.padding(8.dp),
+                action = {
+                    Button(onClick = {strId.value = 0}) {
+                        Text(text = "OK")
+                    }
+                }) {
+                Text(text = stringResource(id = strId.value))
             }
         }
     }
