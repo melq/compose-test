@@ -41,15 +41,17 @@ fun MainContentScreen() {
 
 @Composable
 fun MainContent() {
-    val inGame = remember { mutableStateOf(false) }
+    val inGame = remember { mutableStateOf(false) } // ゲームの状態をもつクラスかなにかにまとめたい
     val history = remember { mutableStateOf(mutableListOf<Int>()) }
-    val strId = remember { mutableStateOf(0) }
     val quesNum = remember { mutableStateOf(0) }
+
+    val strId = remember { mutableStateOf(0) }
     val ansNum = remember { mutableStateOf(0) }
 
     if (!inGame.value) {
         inGame.value = true
         quesNum.value = abs(Random(System.currentTimeMillis()).nextInt() % 100)
+        ansNum.value = 0
         history.value.clear()
     }
 
@@ -70,11 +72,10 @@ fun MainContent() {
 
                 NumPad() {
                     if (it == 100) {
-                        if (ansNum.value == quesNum.value) {
+                        history.value.add(ansNum.value)
+                        if (ansNum.value == quesNum.value)
                             strId.value = R.string.correct
-                            inGame.value = false
-                        } else {
-                            history.value.add(ansNum.value)
+                        else {
                             strId.value = 0
                             if (ansNum.value < quesNum.value)
                                 strId.value = R.string.more
@@ -84,9 +85,7 @@ fun MainContent() {
                     } else
                         when (val newNum = ansNum.value * 10 + it) {
                             in 0..99 -> ansNum.value = newNum
-                            else -> {
-                                ansNum.value = it
-                            }
+                            else -> ansNum.value = it
                         }
                 }
             }
@@ -94,9 +93,17 @@ fun MainContent() {
         if (strId.value != 0) {
             Snackbar(modifier = Modifier.padding(8.dp),
                 action = {
-                    Button(onClick = {strId.value = 0}) {
-                        Text(text = "OK")
-                    }
+                    if (strId.value == R.string.correct) {
+                        Button(onClick = {
+                            strId.value = 0
+                            inGame.value = false
+                        }) {
+                            Text(text = "Next")
+                        }
+                    } else
+                        Button(onClick = { strId.value = 0 }) {
+                            Text(text = "OK")
+                        }
                 }) {
                 Text(text = stringResource(id = strId.value) + " (回答数: ${history.value.size})")
             }
