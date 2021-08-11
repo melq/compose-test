@@ -1,3 +1,3 @@
 # compose-test
 
-数当てゲーム作ってJetpack Composeの練習
+Jetpack Composeの練習で数当てゲームを作っています。
