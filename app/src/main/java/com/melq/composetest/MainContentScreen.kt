@@ -47,6 +47,7 @@ fun MainContent() {
 
     val strId = remember { mutableStateOf(0) }
     val ansNum = remember { mutableStateOf(0) }
+    val isTried = remember { mutableStateOf(false) }
 
     if (!inGame.value) {
         inGame.value = true
@@ -77,6 +78,7 @@ fun MainContent() {
                             strId.value = R.string.correct
                         else {
                             strId.value = 0
+                            isTried.value = true
                             if (ansNum.value < quesNum.value)
                                 strId.value = R.string.more
                             else
@@ -84,7 +86,13 @@ fun MainContent() {
                         }
                     } else
                         when (val newNum = ansNum.value * 10 + it) {
-                            in 0..99 -> ansNum.value = newNum
+                            in 0..99 -> {
+                                if (isTried.value) {
+                                    ansNum.value = it
+                                    isTried.value = false
+                                } else
+                                    ansNum.value = newNum
+                            }
                             else -> ansNum.value = it
                         }
                 }
