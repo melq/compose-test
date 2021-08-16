@@ -93,7 +93,10 @@ fun MainContent() {
                                 } else
                                     ansNum.value = newNum
                             }
-                            else -> ansNum.value = it
+                            else -> {
+                                ansNum.value = it
+                                isTried.value = false
+                            }
                         }
                 }
             }
