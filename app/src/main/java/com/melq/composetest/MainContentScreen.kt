@@ -31,10 +31,8 @@ fun MainContentScreen() {
         content = {
             Box(modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.BottomCenter) {
-                Column(Modifier.fillMaxSize()) {
 
-                    MainContent()
-                }
+                MainContent()
             }
         })
 }
@@ -56,68 +54,62 @@ fun MainContent() {
         history.value.clear()
     }
 
-    Box(modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.BottomCenter) {
-        Column(Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center) {
+    Text(text = quesNum.value.toString())
+    Column(Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center) {
 
-            Column(horizontalAlignment = Alignment.End) {
-                Text(text = quesNum.value.toString())
-
-                DisplayArea(ansNum = ansNum.value) {
-                    ansNum.value /= 10
-                }
-
-                Spacer(modifier = Modifier.size(24.dp))
-
-                NumPad() {
-                    if (it == 100) {
-                        history.value.add(ansNum.value)
-                        if (ansNum.value == quesNum.value)
-                            strId.value = R.string.correct
-                        else {
-                            strId.value = 0
-                            isTried.value = true
-                            if (ansNum.value < quesNum.value)
-                                strId.value = R.string.more
-                            else
-                                strId.value = R.string.less
-                        }
-                    } else
-                        when (val newNum = ansNum.value * 10 + it) {
-                            in 0..99 -> {
-                                if (isTried.value) {
-                                    ansNum.value = it
-                                    isTried.value = false
-                                } else
-                                    ansNum.value = newNum
-                            }
-                            else -> {
-                                ansNum.value = it
-                                isTried.value = false
-                            }
-                        }
-                }
-            }
+        DisplayArea(ansNum = ansNum.value) {
+            ansNum.value /= 10
         }
-        if (strId.value != 0) {
-            Snackbar(modifier = Modifier.padding(8.dp),
-                action = {
-                    if (strId.value == R.string.correct) {
-                        Button(onClick = {
-                            strId.value = 0
-                            inGame.value = false
-                        }) {
-                            Text(text = "Next")
-                        }
-                    } else
-                        Button(onClick = { strId.value = 0 }) {
-                            Text(text = "OK")
-                        }
-                }) {
-                Text(text = stringResource(id = strId.value) + " (回答数: ${history.value.size})")
-            }
+
+        Spacer(modifier = Modifier.size(24.dp))
+
+        NumPad() {
+            if (it == 100) {
+                history.value.add(ansNum.value)
+                if (ansNum.value == quesNum.value)
+                    strId.value = R.string.correct
+                else {
+                    strId.value = 0
+                    isTried.value = true
+                    if (ansNum.value < quesNum.value)
+                        strId.value = R.string.more
+                    else
+                        strId.value = R.string.less
+                }
+            } else
+                when (val newNum = ansNum.value * 10 + it) {
+                    in 0..99 -> {
+                        if (isTried.value) {
+                            ansNum.value = it
+                            isTried.value = false
+                        } else
+                            ansNum.value = newNum
+                    }
+                    else -> {
+                        ansNum.value = it
+                        isTried.value = false
+                    }
+                }
+        }
+    }
+    if (strId.value != 0) {
+        Snackbar(modifier = Modifier.padding(8.dp),
+            action = {
+                if (strId.value == R.string.correct) {
+                    Button(onClick = {
+                        strId.value = 0
+                        inGame.value = false
+                    }) {
+                        Text(text = "Next")
+                    }
+                } else
+                    Button(onClick = { strId.value = 0 }) {
+                        Text(text = "OK")
+                    }
+            }) {
+            Text(text = stringResource(id = strId.value) + " (回答数: ${history.value.size})")
         }
     }
 }
